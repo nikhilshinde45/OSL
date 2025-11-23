@@ -1,0 +1,65 @@
+void RR(struct Process *p, int n) {
+    printf("===== Round Robin =====\n");
+    int tq;
+    printf("Enter the time quantum:\n");
+    scanf("%d", &tq);
+
+    printf("Gantt Chart:\n");
+    printf("(0)|");
+
+    int completed = 0;
+    int Timegiven[100] = {0};
+    int _t = 0;
+    int queue[100], front = 0, rear = 0;
+    int inQueue[100] = {0};
+
+    // push first process that arrives at time 0
+    for (int i = 0; i < n; i++) {
+        if (p[i].at == 0) {
+            queue[rear++] = i;
+            inQueue[i] = 1;
+        }
+    }
+
+    while (completed < n) {
+        if (front == rear) { // no process ready
+            _t++;
+            for (int i = 0; i < n; i++) {
+                if (p[i].at <= _t && !inQueue[i] && Timegiven[i] < p[i].bt) {
+                    queue[rear++] = i;
+                    inQueue[i] = 1;
+                }
+            }
+            continue;
+        }
+
+        int i = queue[front++]; // pop front
+        int requiredtime = (p[i].bt - Timegiven[i] > tq) ? tq : (p[i].bt - Timegiven[i]);
+        Timegiven[i] += requiredtime;
+        _t += requiredtime;
+        printf("P%d(%d)|", p[i].pId, _t);
+
+        // add newly arrived processes
+        for (int j = 0; j < n; j++) {
+            if (p[j].at <= _t && !inQueue[j] && Timegiven[j] < p[j].bt) {
+                queue[rear++] = j;
+                inQueue[j] = 1;
+            }
+        }
+
+        // if not finished, re-add to queue
+        if (Timegiven[i] < p[i].bt) {
+            queue[rear++] = i;
+        } else if (Timegiven[i] == p[i].bt && p[i].ct == 0) {
+            p[i].ct = _t;
+            p[i].tat = p[i].ct - p[i].at;
+            p[i].wt = p[i].tat - p[i].bt;
+            completed++;
+        }
+
+        // mark as out of queue if done
+        if (Timegiven[i] >= p[i].bt) {
+            inQueue[i] = 0;
+        }
+    }
+}

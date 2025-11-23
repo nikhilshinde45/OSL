@@ -1,0 +1,132 @@
+
+Home
+Create
+Join
+Try Premium
+
+Login
+
+Exit Room
+Room ID : ******
+
+
+Delete Room
+This room will auto-delete in 3 days. Retrieve your data before then or upgrade to premium.
+
+Text Section
+0/10000 characters
+
+Convert text to doc
+Convert text to PDF
+Files Section
+10/10 files (0.1/100 MB)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+struct msg {
+    long type;
+    char text[100];
+};
+
+int main() {
+    key_t key = ftok("msgfile", 65);
+    int msgid = msgget(key, 0666 | IPC_CREAT);
+    struct msg message;
+
+    while (1) {
+        // msgrcv blocks until a message arrives
+        if (msgrcv(msgid, &message, sizeof(message.text), 1, 0) == -1) {
+            perror("Exited");
+            break;
+        }
+
+        // Exit condition
+        if (strcmp(message.text, "exit") == 0) {
+            printf("Exiting receiver...\n");
+            break; // exit immediately
+        }
+
+        // Convert to uppercase
+        for (int i = 0; message.text[i]; i++)
+            message.text[i] = toupper(message.text[i]);
+
+        printf("Received: %s\n", message.text);
+        fflush(stdout);
+    }
+
+    // Remove the message queue
+    msgctl(msgid, IPC_RMID, NULL);
+    return 0;
+}
+
+2_1.c
+Preview
+Download
+
+2_2.c
+Preview
+Download
+
+2_2b.c
+Preview
+Download
+
+7-2-2.c
+Preview
+Download
+
+7_2.c
+Preview
+Download
+
+Bankers.c
+Preview
+Download
+
+Codes_Practice.zip
+Preview
+Download
+
+Scheduling.c
+Preview
+Download
+
+shared1.c
+Preview
+Download
+
+shared2.c
+Preview
+Download
+Download All as ZIP
+Save to Google Drive
+PasteRoom Logo
+Securely share and store your text & documents with ease.
+
+Quick Links
+Home
+Create Room
+Join Room
+Try Premium
+About Us
+Join Our Team
+Legal & Contact
+Privacy Policy
+Terms & Conditions
+Refund & Cancellation Policy
+Contact Us
+Subscribe to our Newsletter
+Stay updated with our latest news and offers.
+
+Enter your email
+Subscribe
+Follow Us
+
+Report a bug
+© 2025 PasteRoom. All rights reserved.
+Made with ❤️ by Team PasteRoom.
